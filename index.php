@@ -1,61 +1,77 @@
 <?php
-
-require "config.php";
-require "user.php";
-
-session_start();
-if (isset($_POST['username']) && isset($_POST['password'])) {
-    $uname = $_POST['username'];
-    $upass = $_POST['password'];
-    $user_id = 1;
-
-    $korisnik = new User($user_id, $uname, $upass);
-    
-    $odg = User::logInUser($korisnik, $conn);
-
-    if ($odg->num_rows == 1) {
-        echo `
-        <script>
-        console.log("Uspesno ste se ulogovali");
-        </script>
-        `;
-        $_SESSION['user_id'] = $korisnik->id;
-        header('Location: home.php');
-        exit();
-    } else {
-        echo `
-        <script>
-        console.log("Niste se ulogovali");
-        </script>
-        `;
-    }
-}
+include "includes/header.php";
+?>
+<?php
+include "includes/db.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <title>FON: Zakazivanje kolokvijuma</title>
-</head>
-<body>
-    <div class="login-form">
-        <div class="main-div">
-            <form method="POST" action="#">
-                <div class="container">
-                    <h2>Korisnik</label>
-                    <input type="text" name="username" class="form-control" required>
-                    <br>
-                    <label for="password">Lozinka</label>
-                    <input type="password" name="password" class="form-control" required>
-                    <button type="submit" class="btn btn-primary" name="submit">Prijavi se</button>
-                    <button type="signup" class="btn btn-primary" name="signup">Napravi nalog</button>
-                </div>
-            </form>
+<!-- Navigation -->
+<?php
+include "includes/navigation.php";
+?>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Entries Column -->
+            <div class="col-md-8">
+
+
+            <!-- ubacivanje objava iz baze na glavnu stranicu--> 
+            <?php
+            $query = "SELECT * FROM posts";
+            $select_all_posts_query = mysqli_query($connection,$query);
+
+                    while($row = mysqli_fetch_assoc($select_all_posts_query)){
+                        $post_title = $row['post_title'];
+                        $post_author = $row['post_author'];
+                        $post_date = $row['post_date'];
+                        $post_image = $row['post_image'];
+                        $post_content = $row['post_content'];
+                        ?>
+
+                         <h1 class="page-header">
+                    Page Heading
+                    <small>Secondary Text</small>
+                </h1>
+
+                <!-- First Blog Post -->
+                <h2>
+                    <a href="#"><?php echo $post_title ?></a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php"><?php echo $post_author ?></a>
+                </p>
+                <p><span class="glyphicon glyphicon-time"></span> <?php echo $post_date ?></p>
+                <hr>
+                <img class="img-responsive" src="images/<?php echo $post_image; ?>" alt="">
+                <hr>
+                <p><?php echo $post_content ?></p>
+                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+
+                <hr>
+
+
+
+
+
+          <?php          } ?>
+          <!-- zatvaram zagradu koja mi je ostala od pre -->
+
+            </div>
+        <!-- Blog Sidebar Widgets Column -->
+<?php
+include "includes/sidebar.php";
+?>
+
         </div>
-    </div>
-</body>
+        <!-- /.row -->
 
-</html>
+        <hr>
+
+<?php
+include "includes/footer.php";
+?>
